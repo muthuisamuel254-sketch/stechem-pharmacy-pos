@@ -43,3 +43,45 @@ export function generateReceiptNumber(prefix = "STCH") {
   const rand = Math.floor(Math.random() * 9000 + 1000);
   return `${prefix}-${y}${m}${d}-${rand}`;
 }
+
+export function downloadJson(filename: string, data: unknown) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+export function shareReceiptToWhatsApp(
+  sale: {
+    receiptNumber: string;
+    total: number;
+    items: { name: string; quantity: number; subtotal: number }[];
+    customerPhone?: string;
+    customerName?: string;
+  },
+  pharmacyName: string,
+  currency = "KES"
+) {
+  const phone = (sale.customerPhone || "").replace(/\D/g, "");
+  const formattedPhone = phone.startsWith("0")
+    ? "254" + phone.slice(1)
+    : phone.startsWith("254")
+      ? phone
+      : "254" + phone;
+
+  let message = `*${pharmacyName}*\nReceipt: ${sale.receiptNumber}\n\n`;
+  sale.items.forEach((item) => {
+    message += `• ${item.name} x${item.quantity} = ${currency} ${item.subtotal}\n`;
+  });
+  message += `\n*Total: ${currency} ${sale.total}*\nThank you!`;
+
+  const url = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(message)}`;
+  window.open(url, "_blank");
+}
+
+export function printReceipt() {
+  window.print();
+}
