@@ -4,10 +4,14 @@ export type User = {
   id: string;
   name: string;
   email: string;
+  /** Mobile number for OTP (e.g. 0712345678 or +254712345678) */
+  phone?: string;
   role: UserRole;
   pin?: string;
   isActive: boolean;
   createdAt: string;
+  /** When true, login requires PIN + 6-digit OTP sent to phone */
+  twoFactorEnabled?: boolean;
 };
 
 export type Medicine = {
