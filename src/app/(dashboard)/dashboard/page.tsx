@@ -34,7 +34,7 @@ export default function DashboardPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Dashboard</h1>
           <p className="text-slate-500">
             Welcome to {settings.name} • {formatDate(new Date().toISOString())}
           </p>
@@ -54,12 +54,8 @@ export default function DashboardPage() {
             <TrendingUp className="h-4 w-4 text-teal-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-slate-900">
-              {formatCurrency(todaySalesTotal(), settings.currency)}
-            </div>
-            <p className="text-xs text-slate-500 mt-1">
-              {todaySalesCount()} transaction{todaySalesCount() !== 1 ? "s" : ""}
-            </p>
+            <div className="text-2xl font-bold">{formatCurrency(todaySalesTotal(), settings.currency)}</div>
+            <p className="text-xs text-slate-500 mt-1">{todaySalesCount()} transaction{todaySalesCount() !== 1 ? "s" : ""}</p>
           </CardContent>
         </Card>
 
@@ -69,7 +65,7 @@ export default function DashboardPage() {
             <Package className="h-4 w-4 text-teal-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-slate-900">{totalProducts}</div>
+            <div className="text-2xl font-bold">{totalProducts}</div>
             <p className="text-xs text-slate-500 mt-1">Active medicines</p>
           </CardContent>
         </Card>
@@ -80,7 +76,7 @@ export default function DashboardPage() {
             <AlertTriangle className="h-4 w-4 text-amber-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-slate-900">{lowStock.length}</div>
+            <div className="text-2xl font-bold">{lowStock.length}</div>
             <p className="text-xs text-slate-500 mt-1">Items below reorder level</p>
           </CardContent>
         </Card>
@@ -91,9 +87,7 @@ export default function DashboardPage() {
             <Package className="h-4 w-4 text-teal-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-slate-900">
-              {formatCurrency(totalStockValue, settings.currency)}
-            </div>
+            <div className="text-2xl font-bold">{formatCurrency(totalStockValue, settings.currency)}</div>
             <p className="text-xs text-slate-500 mt-1">At cost price</p>
           </CardContent>
         </Card>
@@ -103,9 +97,7 @@ export default function DashboardPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="text-base">Low Stock Alerts</CardTitle>
-            <Link href="/inventory">
-              <Button variant="ghost" size="sm">View all</Button>
-            </Link>
+            <Link href="/inventory"><Button variant="ghost" size="sm">View all</Button></Link>
           </CardHeader>
           <CardContent>
             {lowStock.length === 0 ? (
@@ -113,10 +105,10 @@ export default function DashboardPage() {
             ) : (
               <div className="space-y-3">
                 {lowStock.slice(0, 6).map((item) => (
-                  <div key={item.id} className="flex items-center justify-between rounded-lg border border-slate-100 px-3 py-2">
+                  <div key={item.id} className="flex items-center justify-between rounded-lg border border-slate-100 dark:border-slate-700 px-3 py-2">
                     <div>
-                      <p className="text-sm font-medium text-slate-900">{item.name}</p>
-                      <p className="text-xs text-slate-500">Reorder at {item.reorderLevel} {item.unit}s</p>
+                      <p className="text-sm font-medium">{item.name}</p>
+                      <p className="text-xs text-slate-500">Reorder at {item.reorderLevel} {item.packUnit}s</p>
                     </div>
                     <Badge variant={item.stock === 0 ? "destructive" : "warning"}>{item.stock} left</Badge>
                   </div>
@@ -139,9 +131,9 @@ export default function DashboardPage() {
                 {expiring.slice(0, 6).map((item) => {
                   const days = daysUntilExpiry(item.expiryDate);
                   return (
-                    <div key={item.id} className="flex items-center justify-between rounded-lg border border-slate-100 px-3 py-2">
+                    <div key={item.id} className="flex items-center justify-between rounded-lg border border-slate-100 dark:border-slate-700 px-3 py-2">
                       <div>
-                        <p className="text-sm font-medium text-slate-900">{item.medicineName}</p>
+                        <p className="text-sm font-medium">{item.medicineName}</p>
                         <p className="text-xs text-slate-500">Batch {item.batchNumber} • Qty {item.quantity}</p>
                       </div>
                       <Badge variant={days <= 30 ? "destructive" : "warning"}>{days}d left</Badge>
@@ -157,9 +149,7 @@ export default function DashboardPage() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle className="text-base">Recent Sales</CardTitle>
-          <Link href="/sales">
-            <Button variant="ghost" size="sm">View all</Button>
-          </Link>
+          <Link href="/sales"><Button variant="ghost" size="sm">View all</Button></Link>
         </CardHeader>
         <CardContent>
           {recentSales.length === 0 ? (
@@ -179,12 +169,12 @@ export default function DashboardPage() {
                 </thead>
                 <tbody>
                   {recentSales.map((sale) => (
-                    <tr key={sale.id} className="border-b border-slate-100">
-                      <td className="py-3 font-medium text-slate-900">{sale.receiptNumber}</td>
-                      <td className="py-3 text-slate-600">{sale.customerName || "—"}</td>
-                      <td className="py-3 text-slate-600">{sale.items.length} item{sale.items.length !== 1 ? "s" : ""}</td>
-                      <td className="py-3 capitalize text-slate-600">{sale.paymentMethod}</td>
-                      <td className="py-3 text-right font-medium text-slate-900">{formatCurrency(sale.total, settings.currency)}</td>
+                    <tr key={sale.id} className="border-b border-slate-100 dark:border-slate-800">
+                      <td className="py-3 font-medium">{sale.receiptNumber}</td>
+                      <td className="py-3 text-slate-600 dark:text-slate-400">{sale.customerName || "—"}</td>
+                      <td className="py-3 text-slate-600 dark:text-slate-400">{sale.items.length} item{sale.items.length !== 1 ? "s" : ""}</td>
+                      <td className="py-3 capitalize text-slate-600 dark:text-slate-400">{sale.paymentMethod}</td>
+                      <td className="py-3 text-right font-medium">{formatCurrency(sale.total, settings.currency)}</td>
                       <td className="py-3 text-right text-slate-500">{new Date(sale.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</td>
                     </tr>
                   ))}
