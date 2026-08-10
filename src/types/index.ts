@@ -1,10 +1,24 @@
+export type UserRole = "admin" | "manager" | "staff";
+
+export type User = {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;
+  pin?: string;
+  isActive: boolean;
+  createdAt: string;
+};
+
 export type Medicine = {
   id: string;
   name: string;
   genericName?: string;
   barcode?: string;
   category: string;
-  unit: string;
+  form: "tablet" | "capsule" | "syrup" | "injection" | "cream" | "drops" | "sachet" | "other";
+  packSize: number;
+  packUnit: "tablet" | "capsule" | "ml" | "g" | "sachet" | "piece";
   sellingPrice: number;
   costPrice: number;
   reorderLevel: number;
@@ -32,7 +46,8 @@ export type CartItem = {
   batchNumber: string;
   quantity: number;
   unitPrice: number;
-  unit: string;
+  packSize: number;
+  packUnit: string;
   expiryDate: string;
 };
 
@@ -46,26 +61,44 @@ export type Sale = {
     quantity: number;
     unitPrice: number;
     subtotal: number;
+    packSize?: number;
   }[];
   subtotal: number;
   discount: number;
   tax: number;
   total: number;
-  paymentMethod: "cash" | "card" | "mobile" | "other";
+  paymentMethod: "cash" | "card" | "mpesa" | "other";
   customerName?: string;
   customerPhone?: string;
   notes?: string;
   createdAt: string;
-  cashier?: string;
+  cashierId?: string;
+  cashierName?: string;
 };
 
-export type Customer = {
+export type AuditLog = {
   id: string;
-  name: string;
-  phone?: string;
-  email?: string;
-  notes?: string;
+  action: string;
+  entityType: "sale" | "sale_item" | "role" | "medicine" | "batch" | "user" | "settings";
+  entityId: string;
+  userId: string;
+  userName: string;
+  userRole: UserRole;
+  before?: Record<string, unknown> | null;
+  after?: Record<string, unknown> | null;
+  timestamp: string;
+  note?: string;
+};
+
+export type Notification = {
+  id: string;
+  title: string;
+  message: string;
+  type: "info" | "warning" | "success" | "audit";
+  read: boolean;
   createdAt: string;
+  relatedEntityType?: string;
+  relatedEntityId?: string;
 };
 
 export type PharmacySettings = {
@@ -76,4 +109,19 @@ export type PharmacySettings = {
   taxRate: number;
   currency: string;
   receiptFooter: string;
+  lowStockThresholdDefault: number;
+  whatsappEnabled: boolean;
+};
+
+export type ReorderRequest = {
+  id: string;
+  medicineId: string;
+  medicineName: string;
+  currentStock: number;
+  reorderLevel: number;
+  suggestedQty: number;
+  status: "pending" | "ordered" | "received" | "cancelled";
+  createdAt: string;
+  createdBy: string;
+  notes?: string;
 };
