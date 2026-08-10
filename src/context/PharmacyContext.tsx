@@ -52,6 +52,13 @@ type PharmacyContextType = {
   canManageUsers: () => boolean;
   canViewAudit: () => boolean;
   canEditSales: () => boolean;
+  importData: (data: {
+    medicines: Medicine[];
+    batches: Batch[];
+    sales: Sale[];
+    auditLogs?: AuditLog[];
+    reorderRequests?: ReorderRequest[];
+  }) => { ok: boolean; error?: string };
 };
 
 const PharmacyContext = createContext<PharmacyContextType | null>(null);
@@ -371,6 +378,44 @@ export function PharmacyProvider({ children }: { children: React.ReactNode }) {
     return sale;
   };
 
+  const importData = (data: {
+    medicines: Medicine[];
+    batches: Batch[];
+    sales: Sale[];
+    auditLogs?: AuditLog[];
+    reorderRequests?: ReorderRequest[];
+  }): { ok: boolean; error?: string } => {
+    try {
+      if (!Array.isArray(data.medicines) || !Array.isArray(data.batches)) {
+        return { ok: false, error: "Invalid data structure" };
+      }
+      setMedicines(data.medicines);
+      setBatches(data.batches);
+      if (Array.isArray(data.sales)) setSales(data.sales);
+      if (Array.isArray(data.auditLogs)) setAuditLogs(data.auditLogs);
+      if (Array.isArray(data.reorderRequests)) setReorderRequests(data.reorderRequests);
+      clearCart();
+      if (currentUser) {
+        addAuditLog({
+          action: "data.imported",
+          entityType: "settings",
+          entityId: "import",
+          userId: currentUser.id,
+          userName: currentUser.name,
+          userRole: currentUser.role,
+          after: {
+            medicines: data.medicines.length,
+            batches: data.batches.length,
+            sales: (data.sales || []).length,
+          } as unknown as Record<string, unknown>,
+        });
+      }
+      return { ok: true };
+    } catch (e) {
+      return { ok: false, error: e instanceof Error ? e.message : "Import failed" };
+    }
+  };
+
   return (
     <PharmacyContext.Provider
       value={{
@@ -381,7 +426,7 @@ export function PharmacyProvider({ children }: { children: React.ReactNode }) {
         getStockForMedicine, getBatchesForMedicine, getExpiringSoon, getLowStock,
         todaySalesTotal, todaySalesCount,
         addAuditLog, markNotificationRead, createReorderRequest,
-        canManageInventory, canManageUsers, canViewAudit, canEditSales,
+        canManageInventory, canManageUsers, canViewAudit, canEditSales, importData,
       }}
     >
       {children}
