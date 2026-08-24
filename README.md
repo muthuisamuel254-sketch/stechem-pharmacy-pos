@@ -1,45 +1,36 @@
 # Stechem Pharmacy POS
 
-Point of Sale and Inventory management system for **Stechem Pharmacy**.
+Kenya pharmacy POS with **multi-device cloud sync**, M-Pesa STK, WhatsApp OTP, biometrics.
 
-## Features (MVP)
+## Multi-device shared backend
 
-- **Dashboard** – Today's sales, low stock alerts, expiring medicines, recent transactions
-- **Point of Sale** – Fast search, cart, FEFO batch selection, tax, discounts, multiple payment methods, receipt
-- **Inventory** – Medicines + batches with expiry tracking, reorder levels, add stock
-- **Sales History** – Full list of past sales with receipt numbers
+1. Free Redis at [upstash.com](https://upstash.com) → Create database
+2. Copy **REST URL** + **REST TOKEN**
+3. Vercel → Settings → Environment Variables:
 
-Data is stored in the browser (`localStorage`) so it works offline and persists between sessions.
+```
+UPSTASH_REDIS_REST_URL=https://....upstash.io
+UPSTASH_REDIS_REST_TOKEN=...
+```
 
-## Tech Stack
+4. Redeploy — all phones/tills share the same data.
 
-- Next.js 15 (App Router) + TypeScript
-- Tailwind CSS
-- Lucide icons
-- Local state + localStorage
+Without these vars the app runs in **local-only** mode (per browser).
 
-## Getting Started
+## Run
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open http://localhost:3000
+## Optional env
 
-## Deploy to Vercel
-
-1. Go to https://vercel.com/new
-2. Import this repository
-3. Click Deploy
-
-Or use the button below after connecting the repo.
-
-## Branding
-
-- Pharmacy name: **Stechem Pharmacy**
-- Primary colour: Teal
-- Currency default: KES
-- Tax rate default: 16%
-
-Change settings in `src/lib/mock-data.ts`.
+```
+WHATSAPP_TOKEN=
+WHATSAPP_PHONE_NUMBER_ID=
+MPESA_CONSUMER_KEY=
+MPESA_CONSUMER_SECRET=
+MPESA_SHORTCODE=
+MPESA_PASSKEY=
+```
