@@ -13,10 +13,13 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
+export const metadata = {
+  manifest: "/manifest.json",
   title: "Stechem Pharmacy POS",
   description: "Point of Sale & Inventory Management for Stechem Pharmacy",
 };
+
+export const viewport = { themeColor: "#0d9488" };
 
 export default function RootLayout({
   children,
