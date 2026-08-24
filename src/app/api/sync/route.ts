@@ -67,6 +67,7 @@ export async function PUT(req: NextRequest) {
   }
 }
 
+/** POST — status check */
 export async function POST() {
   return NextResponse.json({
     ok: true,
