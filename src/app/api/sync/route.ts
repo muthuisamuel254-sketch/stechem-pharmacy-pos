@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { isCloudConfigured, loadSnapshot, saveSnapshot, type PharmacySnapshot } from "@/lib/cloud-store";
+import {
+  isCloudConfigured,
+  loadSnapshot,
+  saveSnapshot,
+  pingCloud,
+  type PharmacySnapshot,
+} from "@/lib/cloud-store";
 
 export const dynamic = "force-dynamic";
 
@@ -67,13 +73,22 @@ export async function PUT(req: NextRequest) {
   }
 }
 
-/** POST — status check */
+/** POST /api/sync — health / status (uses Upstash PING when configured) */
 export async function POST() {
+  if (!isCloudConfigured()) {
+    return NextResponse.json({
+      ok: true,
+      cloud: false,
+      message:
+        "Add UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN on Vercel to enable multi-device sync.",
+    });
+  }
+  const ping = await pingCloud();
   return NextResponse.json({
-    ok: true,
-    cloud: isCloudConfigured(),
-    message: isCloudConfigured()
-      ? "Cloud sync is active — all devices share the same data."
-      : "Add UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN on Vercel to enable multi-device sync.",
+    ok: ping.ok,
+    cloud: true,
+    message: ping.ok
+      ? "Upstash connected — all devices share the same data."
+      : ping.message,
   });
 }
